@@ -1,0 +1,199 @@
+{% load static %}
+<!-- =========================================
+     COMPONENT: SLIDING SIDE PANEL (TRADING PRO VERSION)
+     ========================================= -->
+
+<style>
+    /* --- CORE PANEL CSS --- */
+    .panel-overlay {
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(4px);
+        z-index: 1999; opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+    }
+    .panel-overlay.active { opacity: 1; pointer-events: all; }
+
+    .side-panel {
+        position: fixed; top: 0; right: 0; width: 450px; /* Wider for charts/grids */
+        height: 100vh;
+        background: #0a0a0a; border-left: 2px solid var(--voltage-yellow);
+        z-index: 2000; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+        display: flex; flex-direction: column; padding: 40px;
+        box-shadow: -10px 0 50px rgba(0,0,0,1);
+        overflow-y: auto;
+    }
+    .side-panel::-webkit-scrollbar { width: 4px; }
+    .side-panel::-webkit-scrollbar-thumb { background: #333; }
+
+    .side-panel.open { transform: translateX(0); box-shadow: -5px 0 40px rgba(252, 238, 9, 0.1); }
+
+    .panel-close-btn {
+        align-self: flex-end; background: transparent; border: 1px solid var(--neon-red); color: var(--neon-red);
+        font-family: var(--font-code); padding: 5px 15px; cursor: pointer; transition: 0.3s; margin-bottom: 2rem;
+    }
+    .panel-close-btn:hover { background: var(--neon-red); color: black; box-shadow: 0 0 15px var(--neon-red); }
+
+    .panel-nav { list-style: none; display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 2rem; }
+    .panel-link {
+        font-family: var(--font-head); font-size: 1.5rem; color: #666; text-decoration: none;
+        display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 10px; transition: 0.3s; cursor: pointer;
+    }
+    .panel-link span.arrow { opacity: 0; transform: translateX(-10px); transition: 0.3s; color: var(--voltage-yellow); }
+    .panel-link:hover, .panel-link.active { color: white; padding-left: 10px; border-bottom-color: var(--voltage-yellow); }
+    .panel-link:hover span.arrow, .panel-link.active span.arrow { opacity: 1; transform: translateX(0); }
+
+    /* --- INFO SECTION STYLING (THE CREATIVE PART) --- */
+    #info-section { display: none; animation: fadeIn 0.5s ease; padding-top: 1rem; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .info-desc { color: #999; font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.5rem; border-left: 2px solid var(--electric-blue); padding-left: 15px; }
+
+    /* STATS GRID */
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 2rem; }
+    .stat-box { background: rgba(255,255,255,0.03); padding: 10px; border: 1px solid #222; text-align: center; }
+    .stat-val { font-family: var(--font-head); font-size: 1.2rem; color: white; display: block; }
+    .stat-label { font-size: 0.7rem; color: #666; letter-spacing: 1px; }
+
+    /* ROADMAP STYLING */
+    .roadmap-container { position: relative; border-left: 1px dashed #333; margin-left: 10px; padding-left: 20px; }
+    .roadmap-item { position: relative; margin-bottom: 1.5rem; }
+    .roadmap-item::before {
+        content: ''; position: absolute; left: -25px; top: 5px; width: 10px; height: 10px;
+        background: #111; border: 1px solid #555; border-radius: 50%;
+    }
+    .roadmap-item.completed::before { background: var(--voltage-yellow); border-color: var(--voltage-yellow); box-shadow: 0 0 5px var(--voltage-yellow); }
+
+    .phase-title { color: var(--electric-blue); font-size: 0.85rem; font-weight: bold; margin-bottom: 2px; }
+    .phase-desc { color: #777; font-size: 0.8rem; }
+
+    /* SECURITY BADGE */
+    .security-badge {
+        margin-top: 1rem; border: 1px solid var(--voltage-yellow); background: rgba(252, 238, 9, 0.05);
+        padding: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; color: var(--voltage-yellow); font-size: 0.8rem;
+    }
+</style>
+
+<!-- --- PANEL HTML --- -->
+<div id="panel-overlay" class="panel-overlay" onclick="toggleSidePanel()"></div>
+
+<div id="side-panel" class="side-panel">
+    <button class="panel-close-btn" onclick="toggleSidePanel()">[X] TERMINATE</button>
+
+    <div style="margin-bottom: 2rem;">
+        <h2 style="font-size: 1.2rem; color: var(--electric-blue);">// SYSTEM MENU</h2>
+        <div style="width: 50px; height: 2px; background: var(--electric-blue); margin-top: 5px;"></div>
+    </div>
+
+    <!-- NAVIGATION -->
+    <ul class="panel-nav">
+        <li>
+            <a href="{% url 'contact' %}" class="panel-link">
+                CONTACT <span class="arrow"><</span>
+            </a>
+        </li>
+        <li>
+            <!-- CLICKING THIS OPENS THE "ABOUT" SECTION -->
+            <a onclick="toggleInfoSection(this)" class="panel-link">
+                ABOUT PLATFORM <span class="arrow">v</span>
+            </a>
+        </li>
+        <li>
+            <a href="#" class="panel-link">
+                TRADING PLAN <span class="arrow"><</span>
+            </a>
+        </li>
+    </ul>
+
+    <!-- --- EXPANDABLE INFO SECTION --- -->
+    <div id="info-section">
+
+        <!-- 1. The Professional "Pitch" -->
+        <h3 style="color: white; font-size: 1rem; margin-bottom: 10px;">> ARCHITECTURE</h3>
+        <p class="info-desc">
+            VOLTAGE WEB is a high-frequency decentralized interface built for institutional speed. We aggregate liquidity from top-tier exchanges to provide zero-slippage execution on crypto assets.
+        </p>
+
+        <!-- 2. Live Stats Grid (Crypto Style) -->
+        <div class="stats-grid">
+            <div class="stat-box">
+                <span class="stat-val" style="color: var(--voltage-yellow)">$4.2B+</span>
+                <span class="stat-label">TOTAL VOLUME</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-val" style="color: var(--electric-blue)">12ms</span>
+                <span class="stat-label">LATENCY</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-val">150+</span>
+                <span class="stat-label">PAIRS</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-val">24/7</span>
+                <span class="stat-label">UPTIME</span>
+            </div>
+        </div>
+
+        <!-- 3. The Roadmap (Standard for Crypto Sites) -->
+        <h3 style="color: white; font-size: 1rem; margin-bottom: 15px;">> DEVELOPMENT ROADMAP</h3>
+        <div class="roadmap-container">
+            <div class="roadmap-item completed">
+                <div class="phase-title">PHASE 1: CORE DEVELOPMENT</div>
+                <div class="phase-desc">Platform foundation, backend systems, API integration.</div>
+            </div>
+            <div class="roadmap-item completed">
+                <div class="phase-title">PHASE 2: SYSTEM EXPANSION</div>
+                <div class="phase-desc">Multi-source aggregation, interoperability features, enhanced connectivity.</div>
+            </div>
+            <div class="roadmap-item">
+                <div class="phase-title">PHASE 3: TOKEN MODULE RELEASE</div>
+                <div class="phase-desc">Governance utilities, staking mechanisms, ecosystem incentives.</div>
+            </div>
+        </div>
+
+        <!-- 4. Security Trust Indicator -->
+        <div class="security-badge">
+            <span>[🔒] AUDITED BY CERTIK</span>
+        </div>
+
+    </div>
+
+    <!-- Footer Stats -->
+    <div style="margin-top: auto; border-top: 1px solid #333; padding-top: 20px; color: #444; font-size: 0.7rem;">
+        <p>SERVER: TOKYO_03 // V-4.1.2</p>
+        <p>STATUS: OPERATIONAL</p>
+    </div>
+</div>
+
+<script>
+    function toggleSidePanel() {
+        const panel = document.getElementById('side-panel');
+        const overlay = document.getElementById('panel-overlay');
+        panel.classList.toggle('open');
+        overlay.classList.toggle('active');
+    }
+
+    function toggleInfoSection(linkElement) {
+        const infoSection = document.getElementById('info-section');
+
+        if (infoSection.style.display === "block") {
+            infoSection.style.display = "none";
+            linkElement.classList.remove('active');
+            linkElement.querySelector('.arrow').innerText = "<";
+        } else {
+            infoSection.style.display = "block";
+            linkElement.classList.add('active');
+            linkElement.querySelector('.arrow').innerText = "v";
+
+            // Auto scroll to make sure user sees the new content
+            setTimeout(() => {
+                infoSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if(e.key === "Escape") {
+            const panel = document.getElementById('side-panel');
+            if(panel && panel.classList.contains('open')) toggleSidePanel();
+        }
+    });
+</script>

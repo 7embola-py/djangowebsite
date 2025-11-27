@@ -1,0 +1,296 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VOLTAGE // SECURE UPLINK</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- REUSING CORE VARIABLES --- */
+        :root {
+            --voltage-yellow: #FCEE09;
+            --voltage-dim: #8a8200;
+            --void-black: #050505;
+            --panel-grey: #111111;
+            --electric-blue: #00f0ff;
+            --neon-red: #ff003c;
+            --font-head: 'Orbitron', sans-serif;
+            --font-code: 'Share Tech Mono', monospace;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; cursor: crosshair; }
+        body { background-color: var(--void-black); color: #e0e0e0; font-family: var(--font-code); overflow-x: hidden; }
+
+        /* --- SCANLINES & BASICS --- */
+        .scanlines {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
+            background-size: 100% 4px; z-index: 999; pointer-events: none;
+            animation: scroll 10s linear infinite;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; position: relative; z-index: 2; }
+
+        /* --- NAV (Consistent with Dashboard) --- */
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--voltage-dim); margin-bottom: 3rem; }
+        .logo {
+            font-family: var(--font-head); font-weight: 700; color: white; border: 1px solid var(--voltage-yellow);
+            padding: 5px 15px; background: rgba(252, 238, 9, 0.1); cursor: pointer; transition: 0.3s; user-select: none;
+        }
+        .logo:hover { box-shadow: 0 0 15px var(--voltage-yellow); text-shadow: 0 0 5px white; }
+
+        /* --- CONTACT GRID LAYOUT --- */
+        .uplink-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 3rem;
+        }
+
+        /* --- LEFT: TRANSMISSION FORM --- */
+        .trans-panel {
+            background: rgba(10, 10, 10, 0.8);
+            border: 1px solid #333;
+            padding: 2rem;
+            position: relative;
+        }
+        .trans-panel::before {
+            content: ''; position: absolute; top: -1px; left: -1px; width: 20px; height: 20px;
+            border-top: 2px solid var(--voltage-yellow); border-left: 2px solid var(--voltage-yellow);
+        }
+        .trans-panel::after {
+            content: ''; position: absolute; bottom: -1px; right: -1px; width: 20px; height: 20px;
+            border-bottom: 2px solid var(--voltage-yellow); border-right: 2px solid var(--voltage-yellow);
+        }
+
+        h1 { font-family: var(--font-head); color: var(--electric-blue); margin-bottom: 0.5rem; letter-spacing: 2px; }
+        .sub-head { color: #666; margin-bottom: 2rem; display: block; font-size: 0.9rem; }
+
+        .form-group { margin-bottom: 1.5rem; position: relative; }
+        .form-label { display: block; color: var(--voltage-yellow); margin-bottom: 5px; font-size: 0.9rem; }
+
+        .cyber-input {
+            width: 100%;
+            background: black;
+            border: 1px solid #333;
+            color: white;
+            padding: 15px;
+            font-family: var(--font-code);
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+        .cyber-input:focus {
+            border-color: var(--electric-blue);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
+        }
+        textarea.cyber-input { resize: vertical; min-height: 150px; }
+
+        .btn-transmit {
+            width: 100%;
+            padding: 15px;
+            background: transparent;
+            border: 2px solid var(--voltage-yellow);
+            color: var(--voltage-yellow);
+            font-family: var(--font-head);
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-transmit:hover {
+            background: var(--voltage-yellow);
+            color: black;
+            box-shadow: 0 0 30px var(--voltage-yellow);
+        }
+        .btn-transmit:active { transform: scale(0.98); }
+
+        /* --- RIGHT: INFO TERMINAL --- */
+        .info-terminal {
+            display: flex; flex-direction: column; gap: 2rem;
+        }
+
+        .terminal-box {
+            background: black;
+            border: 1px solid var(--voltage-dim);
+            padding: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .terminal-header {
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px; margin-bottom: 15px;
+            color: var(--neon-red);
+            font-weight: bold;
+            display: flex; justify-content: space-between;
+        }
+
+        .info-item { margin-bottom: 1rem; }
+        .info-label { color: #666; font-size: 0.8rem; display: block; }
+        .info-value { color: white; font-size: 1.1rem; }
+        .info-value.link { color: var(--electric-blue); text-decoration: none; border-bottom: 1px dotted var(--electric-blue); }
+        .info-value.link:hover { color: var(--voltage-yellow); border-color: var(--voltage-yellow); }
+
+        .status-log {
+            color: #444;
+            height: 150px;
+            overflow: hidden;
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+        .log-entry { margin-bottom: 5px; }
+        .log-time { color: var(--voltage-dim); margin-right: 5px; }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .uplink-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="scanlines"></div>
+
+<div class="container">
+    <nav>
+        <div class="logo" onclick="toggleSidePanel()">VOLT // AGE</div>
+        <div>
+            <!-- Back Button -->
+            <a href="{% url 'home' %}" style="color: var(--voltage-yellow); text-decoration: none; font-family: var(--font-head);">
+                < BACK TO GRID
+            </a>
+        </div>
+    </nav>
+
+    <div class="uplink-grid">
+
+        <!-- FORM SECTION -->
+        <div class="trans-panel">
+    <h1>>> INITIATE UPLINK</h1>
+    <span class="sub-head">SECURE CHANNEL // ENCRYPTION: AES-256 // NODE 44</span>
+
+    <!-- IF SENT: Show Success Message -->
+    {% if transmission_sent %}
+        <div style="border: 1px solid var(--voltage-yellow); padding: 2rem; text-align: center; margin-top: 2rem; animation: fadeIn 0.5s;">
+            <h2 style="color: var(--voltage-yellow); text-shadow: 0 0 10px var(--voltage-yellow);">>> TRANSMISSION SUCCESSFUL</h2>
+            <p style="color: #888; margin-top: 10px;">DATA PACKET RECEIVED. CONNECTION TERMINATED.</p>
+            <a href="{% url 'contact' %}" style="display:inline-block; margin-top: 20px; color: var(--electric-blue); text-decoration: none;">[SEND ANOTHER]</a>
+        </div>
+
+    <!-- ELSE: Show the Form -->
+    {% else %}
+        <form action="" method="POST">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label class="form-label">_OPERATIVE ID (NAME)</label>
+                <input type="text" class="cyber-input" placeholder="ENTER ALIAS..." name="name" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">_RETURN FREQUENCY (EMAIL)</label>
+                <input type="email" class="cyber-input" placeholder="USER@NET.IO" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">_DATA PACKET (MESSAGE)</label>
+                <textarea class="cyber-input" placeholder="ENTER ENCRYPTED MESSAGE DATA..." name="message" required></textarea>
+            </div>
+
+            <button type="submit" class="btn-transmit">
+                TRANSMIT DATA_
+            </button>
+        </form>
+    {% endif %}
+</div>
+
+
+        <!-- INFO SIDEBAR -->
+        <div class="info-terminal">
+
+            <!-- DIRECT CONTACTS -->
+            <div class="terminal-box">
+                <div class="terminal-header">
+                    <span>// DIRECT LINES</span>
+                    <span style="color: var(--voltage-yellow)">[OPEN]</span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-label">HEADQUARTERS</span>
+                    <span class="info-value">NEO-TOKYO SECTOR 7</span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-label">SECURE MAIL</span>
+                    <a href="mailto:admin@voltage.net" class="info-value link">ADMIN@VOLTAGE.NET</a>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-label">VOICE COMMS</span>
+                    <span class="info-value">+1 (555) 090-2077</span>
+                </div>
+            </div>
+
+            <!-- FAKE SYSTEM LOG -->
+            <div class="terminal-box">
+                <div class="terminal-header">
+                    <span>// SYSTEM LOG</span>
+                    <span class="blink">_</span>
+                </div>
+                <div class="status-log" id="sys-log">
+                    <!-- JS will populate this -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- SIDE PANEL INCLUDE -->
+{% include 'side_panel.html' %}
+
+<script>
+    // --- SYSTEM LOG ANIMATION ---
+    const logContainer = document.getElementById('sys-log');
+    const messages = [
+        "Initializing secure handshake...",
+        "Routing through proxy server...",
+        "Masking IP address...",
+        "Checking blacklisted nodes...",
+        "Connection established.",
+        "Waiting for user input...",
+        "Encryption key generated: 0x4F99A...",
+        "Ping: 12ms [OPTIMAL]"
+    ];
+
+    let msgIndex = 0;
+
+    function addLog() {
+        if(msgIndex >= messages.length) return;
+
+        const time = new Date().toLocaleTimeString('en-US', {hour12: false});
+        const div = document.createElement('div');
+        div.className = 'log-entry';
+        div.innerHTML = `<span class="log-time">[${time}]</span> ${messages[msgIndex]}`;
+
+        logContainer.appendChild(div);
+        logContainer.scrollTop = logContainer.scrollHeight; // Auto scroll
+
+        msgIndex++;
+
+        // Random typing speed
+        setTimeout(addLog, Math.random() * 800 + 200);
+    }
+
+    // Start log on load
+    window.onload = addLog;
+</script>
+
+</body>
+</html>

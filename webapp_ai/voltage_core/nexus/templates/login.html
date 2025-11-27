@@ -1,0 +1,187 @@
+{% load static %}
+{% load socialaccount %} <!-- 1. Load Google Auth Library -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VOLTAGE // ACCESS CONTROL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --voltage-yellow: #FCEE09;
+            --void-black: #050505;
+            --panel-grey: #111111;
+            --electric-blue: #00f0ff;
+            --neon-red: #ff003c;
+            --font-head: 'Orbitron', sans-serif;
+            --font-code: 'Share Tech Mono', monospace;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--void-black);
+            color: #e0e0e0;
+            font-family: var(--font-code);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Grid Background */
+        .grid-bg {
+            position: absolute; width: 200%; height: 200%;
+            background-image:
+                linear-gradient(var(--panel-grey) 1px, transparent 1px),
+                linear-gradient(90deg, var(--panel-grey) 1px, transparent 1px);
+            background-size: 40px 40px;
+            transform: perspective(500px) rotateX(60deg);
+            z-index: -1;
+            opacity: 0.5;
+            animation: gridMove 20s linear infinite;
+        }
+        @keyframes gridMove { 0% { transform: perspective(500px) rotateX(60deg) translateY(0); } 100% { transform: perspective(500px) rotateX(60deg) translateY(40px); } }
+
+        .login-container {
+            width: 100%;
+            max-width: 450px;
+            background: rgba(10, 10, 10, 0.9);
+            border: 1px solid #333;
+            padding: 3rem;
+            position: relative;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        /* Neon Border Animation */
+        .login-container::before {
+            content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px;
+            background: linear-gradient(45deg, var(--voltage-yellow), transparent, var(--electric-blue), transparent);
+            z-index: -1;
+            background-size: 400%;
+            animation: borderFlow 10s linear infinite;
+        }
+        @keyframes borderFlow { 0% { background-position: 0 0; } 50% { background-position: 100% 0; } 100% { background-position: 0 0; } }
+
+        h1 {
+            font-family: var(--font-head);
+            color: white;
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+
+        .input-group { margin-bottom: 1.5rem; position: relative; }
+
+        label { display: block; color: var(--electric-blue); margin-bottom: 0.5rem; font-size: 0.8rem; }
+
+        input {
+            width: 100%;
+            background: #050505;
+            border: 1px solid #333;
+            color: var(--voltage-yellow);
+            padding: 12px;
+            font-family: var(--font-code);
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+        input:focus { border-color: var(--voltage-yellow); box-shadow: 0 0 10px rgba(252, 238, 9, 0.2); }
+
+        .btn-main {
+            width: 100%;
+            padding: 15px;
+            background: var(--voltage-yellow);
+            color: var(--void-black);
+            border: none;
+            font-family: var(--font-head);
+            font-weight: 900;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 1rem;
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+            transition: 0.3s;
+        }
+        .btn-main:hover { transform: translateY(-2px); box-shadow: 0 0 20px var(--voltage-yellow); }
+
+        .divider {
+            text-align: center; margin: 2rem 0; position: relative; color: #555; font-size: 0.8rem;
+        }
+        .divider::before, .divider::after {
+            content: ''; position: absolute; top: 50%; width: 30%; height: 1px; background: #333;
+        }
+        .divider::before { left: 0; } .divider::after { right: 0; }
+
+        /* Modified to work as a link for Django Auth */
+        .btn-google {
+            width: 100%;
+            padding: 12px;
+            background: white;
+            color: #333;
+            border: none;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: 0.3s;
+            text-decoration: none; /* Added because it is now an <a> tag */
+        }
+        .btn-google:hover { background: #f1f1f1; }
+
+        .back-link {
+            display: block; text-align: center; margin-top: 1.5rem;
+            color: #666; text-decoration: none; font-size: 0.8rem; transition: 0.3s;
+        }
+        .back-link:hover { color: var(--electric-blue); }
+
+    </style>
+</head>
+<body>
+
+    <div class="grid-bg"></div>
+
+    <div class="login-container">
+        <h1>SYSTEM ENTRY</h1>
+
+        <!-- Standard Form (Optional: You can hook this to Django later) -->
+        <form method="post">
+            {% csrf_token %}
+            <div class="input-group">
+                <label>USER_ID</label>
+                <input type="text" name="login" placeholder="Ex: Neo_01">
+            </div>
+            <div class="input-group">
+                <label>ACCESS_KEY (PASSWORD)</label>
+                <input type="password" name="password" placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn-main">INITIALIZE LOGIN</button>
+        </form>
+
+        <div class="divider">OR AUTHENTICATE VIA NETLINK</div>
+
+        <!-- 2. REAL GOOGLE BUTTON (Replaces the fake JS one) -->
+        <!-- This link automatically starts the secure OAuth handshake -->
+        <a href="{% provider_login_url 'google' %}" class="btn-google">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="20" alt="G">
+            Sign up with Google
+        </a>
+
+        <!-- 3. FIXED LINK (Solves the 404 Error) -->
+        <!-- Points to home instead of looping back to login -->
+        <a href="{% url 'home' %}" class="back-link">< TERMINATE SESSION</a>
+
+    </div>
+
+    <!-- 4. Removed the fake JS script because Django handles logic now -->
+
+</body>
+</html>

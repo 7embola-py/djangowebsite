@@ -1,0 +1,174 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WALLET // TERMINAL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* --- REUSING YOUR CORE VARIABLES --- */
+        :root {
+            --voltage-yellow: #FCEE09;
+            --voltage-dim: #8a8200;
+            --void-black: #050505;
+            --panel-grey: #111111;
+            --electric-blue: #00f0ff;
+            --neon-red: #ff003c;
+            --font-head: 'Orbitron', sans-serif;
+            --font-code: 'Share Tech Mono', monospace;
+        }
+
+        body { background-color: var(--void-black); color: #e0e0e0; font-family: var(--font-code); overflow-x: hidden; margin: 0; padding: 0; }
+
+        /* Scanlines */
+        .scanlines { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2)); background-size: 100% 4px; pointer-events: none; z-index: 999; }
+
+        /* Wallet Specific Layout */
+        .w-container { max-width: 1400px; margin: 0 auto; padding: 2rem; display: grid; grid-template-columns: 300px 1fr; gap: 2rem; height: 100vh; }
+
+        .sidebar { border-right: 1px solid #333; padding-right: 2rem; display: flex; flex-direction: column; }
+        .main-dash { display: flex; flex-direction: column; gap: 2rem; }
+
+        .panel { background: rgba(17,17,17,0.8); border: 1px solid #333; padding: 1.5rem; position: relative; }
+        .panel::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--voltage-yellow); transform: scaleX(0); transition: 0.4s; transform-origin: left; }
+        .panel:hover::before { transform: scaleX(1); }
+        .panel:hover { border-color: var(--voltage-dim); box-shadow: 0 0 20px rgba(252, 238, 9, 0.05); }
+
+        h1, h2, h3 { font-family: var(--font-head); margin: 0; }
+        .label { color: var(--electric-blue); font-size: 0.8rem; letter-spacing: 1px; margin-bottom: 5px; display: block; }
+
+        .big-balance { font-size: 3.5rem; color: white; text-shadow: 0 0 10px rgba(255,255,255,0.3); font-family: var(--font-head); }
+        .wallet-id { background: #222; padding: 5px 10px; border: 1px solid #444; color: var(--voltage-yellow); font-size: 0.9rem; margin-top: 1rem; cursor: copy; }
+
+        /* Transaction Log Table */
+        .log-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        .log-table th { text-align: left; color: #666; font-size: 0.8rem; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .log-table td { padding: 12px 0; border-bottom: 1px solid #222; font-size: 0.9rem; }
+        .status-badge { padding: 2px 8px; font-size: 0.7rem; border: 1px solid; text-transform: uppercase; }
+
+        .btn-back { margin-top: auto; border: 1px solid var(--neon-red); color: var(--neon-red); background: transparent; padding: 10px; width: 100%; cursor: pointer; transition: 0.3s; font-family: var(--font-head); }
+        .btn-back:hover { background: var(--neon-red); color: black; box-shadow: 0 0 15px var(--neon-red); }
+
+        /* Animation */
+        .loading-overlay { position: fixed; inset: 0; background: black; z-index: 1000; display: flex; justify-content: center; align-items: center; color: var(--voltage-yellow); font-family: var(--font-head); font-size: 2rem; animation: fadeOut 0.5s 1.5s forwards; pointer-events: none; }
+        @keyframes fadeOut { to { opacity: 0; } }
+    </style>
+</head>
+<body>
+    <div class="scanlines"></div>
+
+    <!-- Fake Loading Screen -->
+    <div class="loading-overlay">DECRYPTING WALLET...</div>
+
+    <div class="w-container">
+        <!-- Sidebar: User Info -->
+        <aside class="sidebar">
+            <div style="margin-bottom: 2rem;">
+                <div class="label">USER PROFILE</div>
+                <h2 style="color: white;">{{ user.username|default:"ANONYMOUS"|upper }}</h2>
+                <div class="wallet-id" title="Click to copy">{{ wallet_id }}</div>
+            </div>
+
+            <div class="panel" style="margin-bottom: 2rem;">
+                <div class="label">SECURITY LEVEL</div>
+                <h3 style="color: var(--voltage-yellow);">MAXIMUM</h3>
+                <div style="width: 100%; height: 4px; background: #333; margin-top: 10px;">
+                    <div style="width: 90%; height: 100%; background: var(--electric-blue); box-shadow: 0 0 10px var(--electric-blue);"></div>
+                </div>
+            </div>
+
+            <div style="flex: 1;"></div>
+            <a href="{% url 'home' %}">
+                <button class="btn-back">< DISCONNECT</button>
+            </a>
+        </aside>
+
+        <!-- Main Dashboard -->
+        <main class="main-dash">
+            <!-- Top Row: Balance -->
+            <div class="panel">
+                <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                    <div>
+                        <span class="label">TOTAL ESTIMATED VALUE</span>
+                        <div class="big-balance">${{ balance }}</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <span class="label">24H CHANGE</span>
+                        <span style="color: var(--electric-blue); font-size: 1.5rem;">+12.4%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Middle Row: Charts & Assets -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div class="panel">
+                    <span class="label">ASSET ALLOCATION</span>
+                    <canvas id="assetChart" style="margin-top: 1rem; max-height: 200px;"></canvas>
+                </div>
+                <div class="panel">
+                    <span class="label">NETWORK STATUS</span>
+                    <div style="margin-top: 1rem; line-height: 1.8; color: #888;">
+                        <div>> NODE: <span style="color:white;">ONLINE</span></div>
+                        <div>> LATENCY: <span style="color:var(--electric-blue);">12ms</span></div>
+                        <div>> PEERS: <span style="color:white;">842</span></div>
+                        <div>> ENCRYPTION: <span style="color:var(--voltage-yellow);">AES-256</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Row: Transactions -->
+            <div class="panel" style="flex: 1;">
+                <span class="label">TRANSACTION LOG</span>
+                <table class="log-table">
+                    <thead>
+                        <tr>
+                            <th>TYPE</th>
+                            <th>HASH</th>
+                            <th>VALUE</th>
+                            <th>STATUS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for tx in transactions %}
+                        <tr>
+                            <td style="color: white;">{{ tx.type }}</td>
+                            <td style="font-family: monospace; color: #666;">{{ tx.hash }}</td>
+                            <td style="font-weight: bold; color: {% if tx.color == 'red' %}var(--neon-red){% elif tx.color == 'green' %}var(--voltage-yellow){% else %}white{% endif %};">
+                                {{ tx.val }}
+                            </td>
+                            <td>
+                                <span class="status-badge" style="border-color: var(--electric-blue); color: var(--electric-blue);">{{ tx.status }}</span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Simple Asset Chart
+        const ctx = document.getElementById('assetChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['BTC', 'ETH', 'VLT', 'USDT'],
+                datasets: [{
+                    data: [40, 30, 20, 10],
+                    backgroundColor: ['#FCEE09', '#00f0ff', '#ff003c', '#ffffff'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'right', labels: { color: '#888', font: { family: 'Share Tech Mono' } } } }
+            }
+        });
+    </script>
+</body>
+</html>
