@@ -1,0 +1,161 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- 1. CINEMATIC HERO (The Hook) -->
+<header class="relative h-[85vh] w-full overflow-hidden flex items-end pb-24">
+    <!-- Background: Abstract Desert/Texture -->
+    <div class="absolute inset-0">
+        <!-- Hero Image: Golden Tannery/Texture -->
+<img src="https://images.pexels.com/photos/2043666/pexels-photo-2043666.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+     class="w-full h-full object-cover opacity-60">
+        <div class="absolute inset-0 bg-gradient-to-t from-taylor-dark via-taylor-dark/40 to-transparent"></div>
+    </div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-6 w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-end">
+        <div class="fade-in-up">
+            <span class="block text-taylor-gold text-xs uppercase tracking-[0.4em] mb-4 pl-1">The Origin Story</span>
+            <h1 class="font-serif text-6xl md:text-8xl text-white leading-none">
+                Born form <br> <span class="italic text-gray-400">The Sands</span>
+            </h1>
+        </div>
+        <div class="hidden md:block pb-4 fade-in-up text-right">
+            <p class="text-gray-400 text-xs uppercase tracking-widest max-w-xs ml-auto border-l border-taylor-gold pl-6 text-left">
+                "We are not makers of things, but keepers of time. Every object tells a story of the hands that held it."
+            </p>
+        </div>
+    </div>
+</header>
+
+<!-- 2. THE PHILOSOPHY (Split Screen) -->
+<section class="py-32 px-6 bg-taylor-dark border-t border-white/5">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+
+        <!-- Text Side -->
+        <div class="relative">
+            <!-- Decorative 'N' Watermark -->
+            <span class="absolute -top-20 -left-10 text-[12rem] font-serif text-white/5 select-none pointer-events-none italic">N</span>
+
+            <h2 class="font-serif text-4xl text-white mb-10 relative z-10">
+                A Tribute to <span class="italic text-taylor-gold">Casablanca</span>
+            </h2>
+
+            <!-- "Drop Cap" Text Styling -->
+            <p class="text-gray-400 leading-loose text-lg font-light mb-8">
+                <span class="text-6xl float-left mr-4 mt-[-10px] font-serif text-taylor-gold">I</span>t began with a simple question: In a world of instant gratification, what remains? The answer was found in the winding alleys of the old medina, where artisans still work with the rhythm of their breath, not the ticking of a clock.
+            </p>
+            <p class="text-gray-400 leading-loose text-sm tracking-wide">
+                NOUR & Co. was established to preserve these dying arts. Whether it is the distillation of rare Oud that takes thirty years to mature, or the hand-stitching of full-grain leather, our philosophy is simple: <strong class="text-white font-normal">If it cannot last a lifetime, we do not make it.</strong>
+            </p>
+        </div>
+
+        <!-- Image Side (Parallax Window) -->
+        <div class="h-[600px] w-full relative overflow-hidden group">
+            <div class="absolute inset-4 border border-taylor-gold/20 z-10 transition duration-700 group-hover:inset-8"></div>
+            <!-- Story Image: Craftsman Hands -->
+<img src="https://images.pexels.com/photos/3757144/pexels-photo-3757144.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+     class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition duration-1000">
+        </div>
+
+    </div>
+</section>
+
+<!-- 3. THE TIMELINE (Vertical Scroll) -->
+<section class="py-32 bg-[#0c0d10] relative">
+    <div class="max-w-4xl mx-auto px-6">
+        <div class="text-center mb-24">
+            <span class="text-taylor-gold text-xs uppercase tracking-mega">The Journey</span>
+            <h3 class="font-serif text-4xl text-white mt-4 italic">Milestones</h3>
+        </div>
+
+        <div class="relative border-l border-white/10 ml-6 md:ml-1/2 space-y-24">
+
+            <!-- Year 1 -->
+            <div class="relative pl-12">
+                <!-- Gold Dot -->
+                <div class="absolute -left-[5px] top-2 w-2.5 h-2.5 bg-taylor-gold rounded-full shadow-[0_0_15px_rgba(197,160,89,0.5)]"></div>
+                <span class="text-taylor-gold text-xs font-bold tracking-widest block mb-2">2018</span>
+                <h4 class="text-2xl font-serif text-white mb-4">The Discovery</h4>
+                <p class="text-gray-500 text-sm leading-relaxed max-w-md">
+                    The founder travels to the Atlas Mountains and discovers a forgotten method of leather tanning using organic saffron and oils.
+                </p>
+            </div>
+
+            <!-- Year 2 -->
+            <div class="relative pl-12">
+                <div class="absolute -left-[5px] top-2 w-2.5 h-2.5 bg-taylor-gold rounded-full"></div>
+                <span class="text-taylor-gold text-xs font-bold tracking-widest block mb-2">2021</span>
+                <h4 class="text-2xl font-serif text-white mb-4">The First Scent</h4>
+                <p class="text-gray-500 text-sm leading-relaxed max-w-md">
+                    Partnering with a third-generation perfumer in Fes, the formula for "Royal Oud" is finalized after 40 distinct variations.
+                </p>
+            </div>
+
+            <!-- Year 3 -->
+            <div class="relative pl-12">
+                <div class="absolute -left-[5px] top-2 w-2.5 h-2.5 bg-taylor-gold rounded-full"></div>
+                <span class="text-taylor-gold text-xs font-bold tracking-widest block mb-2">2024</span>
+                <h4 class="text-2xl font-serif text-white mb-4">NOUR & Co. Launched</h4>
+                <p class="text-gray-500 text-sm leading-relaxed max-w-md">
+                    The collection is unveiled to the world. A commitment to limited batches ensures quality is never compromised.
+                </p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- 4. THE CRAFTSMANSHIP GRID (The "Why") -->
+<section class="py-32 bg-taylor-dark px-6 border-t border-white/5">
+    <div class="max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-px bg-white/10 border border-white/10">
+
+            <!-- Box 1 -->
+            <div class="bg-taylor-dark p-12 text-center group hover:bg-[#151719] transition duration-500">
+                <div class="h-12 w-12 mx-auto text-taylor-gold mb-6 opacity-80 group-hover:scale-110 transition duration-500">
+                    <!-- Icon: Time -->
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                </div>
+                <h3 class="font-serif text-xl text-white mb-4">Patience</h3>
+                <p class="text-gray-500 text-xs leading-6 tracking-wide">
+                    We do not rush the process. Our leathers rest for weeks, our oils macerate for months. Time is the ultimate luxury.
+                </p>
+            </div>
+
+            <!-- Box 2 -->
+            <div class="bg-taylor-dark p-12 text-center group hover:bg-[#151719] transition duration-500">
+                <div class="h-12 w-12 mx-auto text-taylor-gold mb-6 opacity-80 group-hover:scale-110 transition duration-500">
+                    <!-- Icon: Gem -->
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
+                </div>
+                <h3 class="font-serif text-xl text-white mb-4">Purity</h3>
+                <p class="text-gray-500 text-xs leading-6 tracking-wide">
+                    Sourced directly from the earth. No synthetics, no shortcuts. Just raw, honest materials that age beautifully.
+                </p>
+            </div>
+
+            <!-- Box 3 -->
+            <div class="bg-taylor-dark p-12 text-center group hover:bg-[#151719] transition duration-500">
+                <div class="h-12 w-12 mx-auto text-taylor-gold mb-6 opacity-80 group-hover:scale-110 transition duration-500">
+                    <!-- Icon: Fingerprint/Identity -->
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg>
+                </div>
+                <h3 class="font-serif text-xl text-white mb-4">Identity</h3>
+                <p class="text-gray-500 text-xs leading-6 tracking-wide">
+                    Every piece is unique. The grain of the leather, the note of the oud—these are fingerprints of nature.
+                </p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- 5. SIGNATURE FOOTER -->
+<div class="py-24 text-center bg-[#0a0b0d]">
+    <p class="font-serif text-4xl text-gray-600 italic mb-4">"Heritage is not what you keep,<br> it is what you leave behind."</p>
+    <div class="h-px w-24 bg-taylor-gold/30 mx-auto mt-8 mb-8"></div>
+    <span class="text-[10px] uppercase tracking-mega text-taylor-gold">The Founder</span>
+</div>
+
+{% endblock %}

@@ -1,0 +1,276 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOUR & Co. | Heritage Collection</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap"
+        rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'taylor-dark': '#0f1115',
+                        'taylor-card': '#16181c',
+                        'taylor-gold': '#c5a059',
+                        'taylor-text': '#e5e5e5',
+                        'taylor-gray': '#9ca3af',
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['"Lato"', 'sans-serif'],
+                    },
+                    letterSpacing: {
+                        'widest-xl': '0.25em',
+                        'mega': '0.4em',
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* ALL CSS MUST LIVE INSIDE THESE TWO TAGS */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .nav-link {
+            position: relative;
+            display: inline-block;
+            padding-bottom: 4px;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: 0;
+            left: 50%;
+            background-color: #c5a059;
+            transition: width 0.3s ease, left 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+            left: 0;
+        }
+
+        /* The Scrollbar Fix */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<!-- === PASTE THIS ABOVE </head> === -->
+<script type="text/javascript">
+    var user = '{{ request.user }}'
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+</script>
+<!-- === END OF PASTE === -->
+</head> <!-- <--- MAKE SURE IT IS ABOVE THIS TAG -->
+<!-- === PASTE THIS ABOVE </body> === -->
+
+
+<body class="bg-taylor-dark text-taylor-text min-h-screen flex flex-col font-sans">
+
+    <!-- === HEADER (The specific layout: Logo Center, minimal text) === -->
+    <nav
+        class="fixed top-0 w-full z-50 bg-gradient-to-b from-taylor-dark/90 to-transparent transition-all duration-300 backdrop-blur-[2px] border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between relative">
+
+            <!-- Left: Minimal Links -->
+            <div class="hidden md:flex space-x-10 text-[10px] uppercase tracking-mega font-bold text-gray-400">
+                <a href="{% url 'shop' %}" class="nav-link hover:text-white transition">The Shop</>
+                    <a href="{% url 'heritage' %}" class="nav-link hover:text-white transition">Heritage</a>
+            </div>
+
+            <!-- Center: The Crown Jewel Logo -->
+            <div class="absolute left-1/2 transform -translate-x-1/2 text-center group cursor-pointer">
+                <a href="{% url 'home' %}">
+                    <div class="flex flex-col items-center">
+                        <span
+                            class="font-serif italic text-3xl text-taylor-gold tracking-widest font-semibold group-hover:text-white transition duration-500">NOUR</span>
+                        <div
+                            class="h-px w-full bg-taylor-gold my-1 scale-x-50 group-hover:scale-x-100 transition duration-500">
+                        </div>
+                        <span
+                            class="text-[8px] uppercase tracking-[0.5em] text-gray-500 group-hover:text-taylor-gold transition duration-500">Est.
+                            2024</span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Right: Account & Cart -->
+            <div class="flex items-center space-x-8 text-[10px] uppercase tracking-mega font-bold text-gray-400">
+                <a href="{% url 'journal' %}" class="hidden md:block nav-link hover:text-white transition">Journal</a>
+
+                {% if user.is_authenticated %}
+                <span class="text-taylor-gold">{{ user.username }}</span>
+                <a href="{% url 'account_logout' %}" class="nav-link hover:text-white transition">Logout</a>
+                {% else %}
+                <a href="{% url 'account_login' %}" class="nav-link hover:text-white transition">Login</a>
+                <a href="{% url 'account_signup' %}" class="nav-link hover:text-white transition">Register</a>
+                {% endif %}
+
+                <a href="{% url 'cart' %}" class="relative cursor-pointer hover:text-white transition">
+                    <span id="cart-count">Cart ({{ cartItems }})</span>
+                </a>
+            </div>
+    </nav>
+
+    <!-- === DYNAMIC CONTENT === -->
+    {% block content %}
+    {% endblock %}
+
+    <!-- === FOOTER (Large, Multi-column, dark gray text) === -->
+    <footer class="bg-[#0b0c0f] border-t border-white/5 pt-24 pb-12 px-6">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12">
+
+            <!-- Logo Column -->
+            <div class="md:col-span-4 text-center md:text-left">
+                <span class="font-serif italic text-2xl text-taylor-gold">Nour & Co.</span>
+                <p class="mt-6 text-gray-500 text-sm leading-7 font-light">
+                    Crafting legacies since 2024. <br>
+                    Dedicated to the art of fine living.
+                </p>
+            </div>
+
+            <!-- Links Column -->
+            <div class="md:col-span-2">
+                <h4
+                    class="text-white text-xs uppercase tracking-widest mb-6 border-b border-taylor-gold/30 pb-2 inline-block">
+                    Shop</h4>
+                <ul class="space-y-4 text-xs text-gray-500 uppercase tracking-widest">
+                    <li><a href="#" class="hover:text-taylor-gold transition">Oud</a></li>
+                    <li><a href="#" class="hover:text-taylor-gold transition">Watches</a></li>
+                    <li><a href="#" class="hover:text-taylor-gold transition">Leather</a></li>
+                </ul>
+            </div>
+
+            <!-- Links Column -->
+            <div class="md:col-span-2">
+                <h4
+                    class="text-white text-xs uppercase tracking-widest mb-6 border-b border-taylor-gold/30 pb-2 inline-block">
+                    Support</h4>
+                <ul class="space-y-4 text-xs text-gray-500 uppercase tracking-widest">
+                    <li><a href="#" class="hover:text-taylor-gold transition">Shipping</a></li>
+                    <li><a href="#" class="hover:text-taylor-gold transition">Contact</a></li>
+                </ul>
+            </div>
+
+            <!-- Newsletter -->
+            <div class="md:col-span-4">
+                <h4 class="text-white text-xs uppercase tracking-widest mb-6">Stay Connected</h4>
+                <form class="flex border-b border-gray-700 pb-2">
+                    <input type="email" placeholder="Email Address"
+                        class="bg-transparent w-full outline-none text-white placeholder-gray-600 font-serif italic">
+                    <button class="text-xs uppercase tracking-widest text-taylor-gold">Join</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto mt-20 text-center text-[10px] text-gray-700 uppercase tracking-mega">
+            &copy; 2024 Nour & Co. All Rights Reserved.
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast"
+        class="fixed bottom-10 right-10 bg-taylor-gold text-black px-6 py-4 rounded shadow-2xl transform translate-y-24 opacity-0 transition-all duration-500 z-50 font-serif italic border border-white/10">
+        Item added to cart
+    </div>
+
+    <script type="text/javascript">
+        var updateBtns = document.getElementsByClassName('update-cart')
+
+        for (var i = 0; i < updateBtns.length; i++) {
+            updateBtns[i].addEventListener('click', function () {
+                var productId = this.dataset.product
+                var action = this.dataset.action
+                console.log('productId:', productId, 'Action:', action)
+                console.log('USER:', user)
+
+                if (user === 'AnonymousUser') {
+                    alert('Please login to add items to cart');
+                } else {
+                    updateUserOrder(productId, action)
+                }
+            })
+        }
+
+        function updateUserOrder(productId, action) {
+            console.log('User is authenticated, sending data...')
+
+            var url = '/update_item/'
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken,
+                },
+                body: JSON.stringify({ 'productId': productId, 'action': action })
+            })
+                .then((response) => {
+                    return response.json();
+                })
+                .then((data) => {
+                    console.log('Data:', data)
+
+                    // IF we are on the cart page, we MUST reload to update quantities and totals
+                    if (window.location.pathname.includes('/cart/')) {
+                        location.reload()
+                        return; // Stop here
+                    }
+
+                    // 1. Update Cart Count in Navbar
+                    if (data.cartItems !== undefined) {
+                        document.getElementById('cart-count').innerText = 'Cart (' + data.cartItems + ')'
+                    }
+
+                    // 2. Show Toast Notification
+                    var toast = document.getElementById('toast')
+                    toast.classList.remove('translate-y-24', 'opacity-0')
+
+                    // 3. Hide Toast after 3 seconds
+                    setTimeout(() => {
+                        toast.classList.add('translate-y-24', 'opacity-0')
+                    }, 3000)
+                });
+        }
+    </script>
+</body>
+
+</html>

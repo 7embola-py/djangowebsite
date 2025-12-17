@@ -1,0 +1,38 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center px-6 pt-24 pb-12">
+    <div class="max-w-md w-full">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="font-serif italic text-4xl text-taylor-gold mb-4">Sign Out</h1>
+            <p class="text-gray-400 text-sm tracking-wide">Are you sure you want to sign out?</p>
+        </div>
+
+        <!-- Logout Confirmation Card -->
+        <div class="bg-taylor-card border border-white/10 rounded-lg p-8 shadow-2xl">
+            <form method="POST" action="{% url 'account_logout' %}" class="space-y-6">
+                {% csrf_token %}
+
+                <p class="text-center text-gray-300 mb-6">
+                    You are currently signed in as <span class="text-taylor-gold font-semibold">{{ user.username
+                        }}</span>
+                </p>
+
+                <!-- Logout Button -->
+                <button type="submit"
+                    class="w-full bg-taylor-gold text-black font-bold py-3 rounded uppercase tracking-widest text-sm hover:bg-white transition duration-300 shadow-lg">
+                    Yes, Sign Me Out
+                </button>
+
+                <!-- Cancel Button -->
+                <a href="{% url 'home' %}"
+                    class="block w-full text-center bg-transparent border border-gray-700 text-gray-300 font-bold py-3 rounded uppercase tracking-widest text-sm hover:border-taylor-gold hover:text-taylor-gold transition duration-300">
+                    Cancel
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

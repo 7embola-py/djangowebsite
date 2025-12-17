@@ -1,0 +1,121 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- 1. EDITORIAL HEADER (The Magazine Cover) -->
+<header class="relative h-[60vh] flex items-center justify-center overflow-hidden border-b border-white/5">
+    <!-- Background Texture -->
+    <div class="absolute inset-0 bg-[#0f1115]">
+        <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+    </div>
+
+    <div class="relative z-10 text-center max-w-4xl px-6 fade-in-up">
+        <span class="block text-taylor-gold text-[10px] uppercase tracking-[0.5em] mb-6 border border-taylor-gold/30 px-4 py-2 inline-block rounded-full">
+            The Editorial
+        </span>
+        <h1 class="font-serif text-6xl md:text-8xl text-white mb-6 leading-none">
+            Stories of <span class="italic text-gray-500">Origin</span>
+        </h1>
+        <p class="text-gray-400 font-light text-sm tracking-widest max-w-lg mx-auto leading-loose">
+            Explorations into the history, craft, and culture behind our collections.
+            Slow reading for the modern soul.
+        </p>
+    </div>
+</header>
+
+<!-- 2. THE ARTICLES LIST -->
+<section class="bg-taylor-dark min-h-screen">
+
+    <!-- We Loop through the posts sent from views.py -->
+    {% for post in posts %}
+
+    <!--
+       DJANGO TRICK:
+       We use the 'cycle' tag to switch the direction every time.
+       Item 1: Row (Normal)
+       Item 2: Row-Reverse (Flipped)
+    -->
+    <article class="group relative grid grid-cols-1 lg:grid-cols-2 border-b border-white/5 overflow-hidden">
+
+        <!--
+           IMAGE SIDE
+           We use 'order' classes to flip them on desktop based on the cycle loop
+        -->
+        <div class="relative h-[500px] lg:h-[700px] w-full overflow-hidden {% cycle 'lg:order-1' 'lg:order-2' %}">
+
+            <!-- Link wrapper so image is clickable -->
+            <a href="#">
+                <!--
+                   Check if post has an image. If not, use a fancy fallback.
+                -->
+                {% if post.image %}
+                    <img src="{{ post.image.url }}" class="w-full h-full object-cover transition duration-[1.5s] ease-in-out group-hover:scale-110 opacity-80 group-hover:opacity-100">
+                {% else %}
+                    <!-- Fallback if you didn't upload an image yet -->
+                    <img src="https://images.unsplash.com/photo-1505569127510-bde15360d7f6?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover grayscale opacity-50">
+                {% endif %}
+
+                <!-- Dark Overlay for mood -->
+                <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition duration-700"></div>
+            </a>
+        </div>
+
+        <!-- TEXT SIDE -->
+        <div class="flex flex-col justify-center p-12 lg:p-24 bg-[#0a0b0d] relative {% cycle 'lg:order-2' 'lg:order-1' %}">
+
+            <!-- Decorative Number (01, 02, 03...) -->
+            <span class="absolute top-10 left-10 font-serif text-8xl text-white/5 italic select-none">
+                0{{ forloop.counter }}
+            </span>
+
+            <div class="relative z-10">
+                <!-- Meta Data -->
+                <div class="flex items-center gap-4 text-[10px] uppercase tracking-mega text-taylor-gold mb-6">
+                    <span>{{ post.date_created|date:"M d, Y" }}</span> <!-- Automatic Date Format -->
+                    <div class="w-8 h-px bg-white/20"></div>
+                    <span>Culture</span>
+                </div>
+
+                <!-- Title -->
+                <h2 class="font-serif text-4xl md:text-5xl text-white mb-8 leading-tight group-hover:text-taylor-gold transition duration-500">
+                    <a href="#">{{ post.title }}</a>
+                </h2>
+
+                <!-- Content Snippet (Only first 30 words) -->
+                <p class="text-gray-500 text-sm leading-8 mb-10 font-light border-l border-white/10 pl-6">
+                    {{ post.content|truncatewords:30 }}
+                </p>
+
+                <!-- Button -->
+                <a href="#" class="inline-flex items-center text-xs uppercase tracking-widest text-white group-hover:text-taylor-gold transition">
+                    Read Story
+                    <!-- Animated Arrow -->
+                    <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-2 transition duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                </a>
+            </div>
+        </div>
+
+    </article>
+    {% endfor %}
+
+    <!-- EMPTY STATE (If you have 0 posts) -->
+    {% if not posts %}
+    <div class="py-40 text-center text-gray-500">
+        <p class="italic font-serif text-2xl">The pages are currently blank.</p>
+        <p class="text-xs uppercase tracking-widest mt-2">Check back soon for new stories.</p>
+    </div>
+    {% endif %}
+
+</section>
+
+<!-- 3. NEWSLETTER FOOTER -->
+<section class="py-24 px-6 text-center border-t border-white/5 bg-[#0f1115]">
+    <h3 class="font-serif text-3xl text-white italic mb-6">"Ink & Paper"</h3>
+    <p class="text-gray-500 text-xs uppercase tracking-widest mb-8">Subscribe to receive the Journal weekly</p>
+    <div class="max-w-md mx-auto relative">
+        <input type="text" placeholder="Your Email" class="w-full bg-transparent border-b border-gray-700 py-3 text-center text-white focus:border-taylor-gold outline-none transition font-serif italic">
+    </div>
+</section>
+
+{% endblock %}

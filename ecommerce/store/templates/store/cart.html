@@ -1,0 +1,100 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="pt-32 pb-24 px-6 min-h-screen bg-taylor-dark">
+    <div class="max-w-5xl mx-auto">
+
+        <div class="mb-12 border-b border-white/5 pb-6 flex justify-between items-end">
+            <div>
+                <span class="text-taylor-gold text-xs uppercase tracking-mega">Your Selection</span>
+                <h2 class="font-serif text-3xl md:text-4xl text-white mt-2 italic">Shopping Bag</h2>
+            </div>
+            <a href="{% url 'home' %}" class="text-[10px] uppercase tracking-widest text-gray-500 hover:text-white transition">
+                &larr; Continue Shopping
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+
+            <!-- LEFT COLUMN: Cart Items -->
+            <div class="lg:col-span-2 space-y-6">
+
+                <!-- Headers -->
+                <div class="hidden md:grid grid-cols-6 text-[10px] uppercase tracking-widest text-gray-500 pb-2 border-b border-white/5">
+                    <div class="col-span-3">Product</div>
+                    <div class="col-span-1 text-center">Price</div>
+                    <div class="col-span-1 text-center">Quantity</div>
+                    <div class="col-span-1 text-right">Total</div>
+                </div>
+
+                <!-- REAL DATABASE LOOP -->
+                {% for item in items %}
+                <div class="flex flex-col md:grid md:grid-cols-6 gap-4 items-center border-b border-white/5 pb-6">
+
+                    <!-- Image & Name -->
+                    <div class="col-span-3 flex items-center gap-6 w-full md:w-auto">
+                        <div class="w-20 h-24 bg-taylor-card overflow-hidden relative border border-white/5">
+                            <img src="{{ item.product.imageURL }}" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h3 class="font-serif text-lg text-white italic">{{ item.product.name }}</h3>
+                            <p class="text-gray-500 text-[10px] uppercase tracking-widest mt-1">Luxury Item</p>
+                        </div>
+                    </div>
+
+                    <!-- Price -->
+                    <div class="col-span-1 text-sm text-gray-400 font-light">${{ item.product.price }}</div>
+
+                    <!-- Quantity Buttons (With JS Hooks) -->
+                    <div class="col-span-1 flex items-center justify-center">
+                        <div class="flex items-center border border-white/10">
+                            <!-- Minus -->
+                            <button data-product="{{ item.product.id }}" data-action="remove" class="update-cart w-8 h-8 text-gray-500 hover:text-white hover:bg-white/5 transition">-</button>
+
+                            <!-- Quantity -->
+                            <span class="w-8 h-8 flex items-center justify-center text-xs text-taylor-gold font-serif">{{ item.quantity }}</span>
+
+                            <!-- Plus -->
+                            <button data-product="{{ item.product.id }}" data-action="add" class="update-cart w-8 h-8 text-gray-500 hover:text-white hover:bg-white/5 transition">+</button>
+                        </div>
+                    </div>
+
+                    <!-- Total -->
+                    <div class="col-span-1 text-right text-taylor-gold font-serif italic">${{ item.get_total }}</div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- RIGHT COLUMN: Summary -->
+            <div class="lg:col-span-1">
+                <div class="bg-taylor-card p-8 border border-white/5 sticky top-32">
+                    <h3 class="font-serif text-xl text-white italic mb-6">Order Summary</h3>
+
+                    <div class="space-y-4 text-sm mb-8 border-b border-white/5 pb-8">
+                        <div class="flex justify-between text-gray-400">
+                            <span>Total Items</span>
+                            <span>{{ order.get_cart_items }}</span>
+                        </div>
+                        <div class="flex justify-between text-gray-400">
+                            <span>Shipping</span>
+                            <span class="text-[10px] uppercase">Calculated at Checkout</span>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-end mb-8">
+                        <span class="text-xs uppercase tracking-widest text-white">Total</span>
+                        <span class="font-serif text-2xl text-taylor-gold italic">${{ order.get_cart_total }}</span>
+                    </div>
+
+                    <a href="{% url 'checkout' %}" class="block w-full bg-taylor-gold text-black text-center py-4 text-xs uppercase tracking-mega hover:bg-white transition duration-500">
+                        Proceed to Checkout
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

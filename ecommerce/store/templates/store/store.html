@@ -1,0 +1,159 @@
+ {% extends 'store/base.html' %}
+
+{% block content %}
+
+    <!-- 1. HERO SECTION (Cinematic, Slow Zoom Effect) -->
+    <header class="relative h-screen w-full overflow-hidden">
+        <!-- Background Image: Dark, atmospheric -->
+        <div class="absolute inset-0">
+            <img src="https://images.unsplash.com/photo-1615655406736-b37c4fabf923?q=80&w=2070&auto=format&fit=crop"
+                 class="w-full h-full object-cover opacity-60 animate-[pulse_10s_ease-in-out_infinite] scale-105">
+            <!-- Vignette Overlay -->
+            <div class="absolute inset-0 bg-gradient-to-t from-taylor-dark via-transparent to-taylor-dark/50"></div>
+        </div>
+
+        <!-- Content: Center, very elegant -->
+        <div class="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
+            <div class="mb-4 text-taylor-gold text-[9px] uppercase tracking-[0.5em] border border-taylor-gold/30 px-4 py-2 rounded-sm backdrop-blur-sm">
+                The Private Collection
+            </div>
+            <h1 class="font-serif text-6xl md:text-8xl lg:text-9xl text-white mb-6 leading-none drop-shadow-2xl">
+                Timeless <span class="italic text-gray-400">Aura</span>
+            </h1>
+            <p class="text-gray-300 font-light text-sm md:text-lg tracking-widest max-w-md mx-auto mb-10">
+                A celebration of heritage, craftsmanship, and the art of fine living.
+            </p>
+            <a href="#intro" class="animate-bounce mt-10 text-taylor-gold">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+            </a>
+        </div>
+    </header>
+
+    <!-- 2. THE INTRO / MEDALLION SECTION (Critical for the "Look") -->
+    <section id="intro" class="py-24 md:py-32 px-6 text-center relative bg-taylor-dark">
+        <!-- Vertical Line -->
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 h-16 w-px bg-taylor-gold/30"></div>
+
+        <div class="max-w-3xl mx-auto">
+            <!-- The "Medallion" Graphic -->
+            <div class="w-20 h-20 mx-auto rounded-full border border-taylor-gold/40 flex items-center justify-center mb-8 bg-taylor-card relative">
+                <div class="absolute inset-1 rounded-full border border-taylor-gold/20"></div>
+                <span class="font-serif text-3xl italic text-taylor-gold pt-1">N</span>
+            </div>
+
+            <h2 class="font-serif text-4xl md:text-5xl text-white mb-8 leading-tight">
+                "We do not create for the moment, <br> but for the <span class="italic text-taylor-gold">Generations</span>."
+            </h2>
+            <p class="text-gray-500 leading-loose text-sm font-light tracking-wide">
+                Like the finest oud that matures over decades, or a watch passed down from father to son,
+                NOUR & Co. represents the unyielding pursuit of perfection. Our philosophy is rooted in
+                the belief that true luxury is not about excess, but about meaning.
+            </p>
+
+            <!-- Signature Graphic (CSS simulated) -->
+            <div class="mt-10 font-serif text-4xl text-gray-600 italic opacity-50 rotate-[-5deg]">
+                Nour & Co.
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. PRODUCT SLIDER (The "Ghost Arrow" Version) -->
+<section class="py-24 bg-[#0c0d10] relative border-b border-white/5">
+    <div class="max-w-[1400px] mx-auto px-6 relative">
+
+        <!-- Section Header -->
+        <div class="flex flex-col md:flex-row justify-between items-end mb-12">
+            <div>
+                <span class="text-taylor-gold text-xs uppercase tracking-mega">Our Curations</span>
+                <h3 class="font-serif text-4xl text-white mt-3">The Masterworks</h3>
+            </div>
+            <!-- Restored Catalogue Button -->
+            <div class="mt-6 md:mt-0">
+                <a href="{% url 'shop' %}" class="text-[10px] uppercase tracking-widest text-gray-400 hover:text-white transition border-b border-white/10 hover:border-taylor-gold pb-1">
+                    View Full Catalogue &rarr;
+                </a>
+            </div>
+        </div>
+
+        <!-- SLIDER WRAPPER (Relative parent for absolute arrows) -->
+        <div class="relative group/slider">
+
+            <!-- === GHOST LEFT ARROW (Pops up on Hover) === -->
+            <button onclick="scrollProducts('left')"
+                    class="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-14 h-full bg-gradient-to-r from-black/80 to-transparent
+                           opacity-0 group-hover/slider:opacity-100 transition-opacity duration-500
+                           flex items-center justify-start pl-4 text-white hover:text-taylor-gold hidden md:flex">
+                <svg class="w-8 h-8 drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M15 19l-7-7 7-7"></path></svg>
+            </button>
+
+            <!-- === SCROLLABLE CONTAINER === -->
+            <div id="productContainer" class="flex gap-6 overflow-x-auto no-scrollbar scroll-smooth pb-10">
+
+                {% for product in products %}
+                <div class="w-[300px] md:w-[350px] flex-shrink-0 bg-taylor-card p-0 flex flex-col group relative transition duration-500 hover:-translate-y-1">
+                    <!-- Tall Image Window -->
+                    <div class="w-full h-[450px] overflow-hidden relative">
+                        <img src="{{ product.imageURL }}"
+                             class="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition duration-700">
+
+                        <!-- Quick Add (Bottom of image) -->
+                        <div class="absolute bottom-0 left-0 w-full translate-y-full group-hover:translate-y-0 transition duration-300 z-10">
+                            <button data-product="{{ product.id }}" data-action="add" class="update-cart w-full bg-taylor-gold text-black py-4 text-[10px] uppercase tracking-mega hover:bg-white transition">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Details (Below Image) -->
+                    <div class="pt-6 pb-4 text-center px-4 bg-taylor-card z-20">
+                        <span class="block text-gray-500 text-[9px] uppercase tracking-widest mb-2">Luxury Item</span>
+                        <h3 class="font-serif text-2xl text-white italic mb-3">{{ product.name }}</h3>
+                        <span class="text-taylor-gold font-serif italic">${{ product.price|floatformat:2 }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+
+            </div>
+
+            <!-- === GHOST RIGHT ARROW === -->
+            <button onclick="scrollProducts('right')"
+                    class="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-14 h-full bg-gradient-to-l from-black/80 to-transparent
+                           opacity-0 group-hover/slider:opacity-100 transition-opacity duration-500
+                           flex items-center justify-end pr-4 text-white hover:text-taylor-gold hidden md:flex">
+                <svg class="w-8 h-8 drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 5l7 7-7 7"></path></svg>
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- KEEP THE SCRIPT -->
+<script>
+    function scrollProducts(direction) {
+        const container = document.getElementById('productContainer');
+        const scrollAmount = direction === 'left' ? -380 : 380;
+        container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+</script>
+
+    <!-- 4. PARALLAX STRIP (Updated) -->
+<section class="h-[60vh] relative bg-fixed bg-center bg-cover flex items-center justify-center"
+         style="background-image: url('https://images.unsplash.com/photo-1590073844006-33379778ae09?q=80&w=2074&auto=format&fit=crop');">
+
+    <!-- Darker Overlay to make text pop -->
+    <div class="absolute inset-0 bg-black/70"></div>
+
+    <div class="relative z-10 text-center px-6 border border-white/10 p-12 bg-black/40 backdrop-blur-sm">
+        <h2 class="font-serif text-4xl md:text-6xl text-white italic mb-4">The Atelier</h2>
+        <p class="text-gray-200 text-xs uppercase tracking-mega mb-8">Handcrafted in Casablanca</p>
+        <a href="#" class="inline-block bg-white text-black px-8 py-3 text-[10px] uppercase tracking-widest hover:bg-taylor-gold transition duration-300">
+            Visit the Studio
+        </a>
+    </div>
+</section>
+
+    <!-- 5. FINAL QUOTE (Footer lead-in) -->
+    <section class="py-24 bg-taylor-dark text-center px-6">
+        <h2 class="font-serif text-3xl text-gray-500 italic">"Luxury is the ease of a t-shirt in a very expensive dress."</h2>
+    </section>
+
+{% endblock %}

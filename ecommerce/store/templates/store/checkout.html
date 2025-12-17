@@ -1,0 +1,296 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="pt-32 pb-24 px-6 min-h-screen bg-taylor-dark">
+    <div class="max-w-6xl mx-auto">
+
+        <!-- Breadcrumb / Header -->
+        <div class="mb-12 border-b border-white/5 pb-6 flex justify-between items-end fade-in-up">
+            <div>
+                <span class="text-gray-500 text-[10px] uppercase tracking-mega">Step 2 of 3</span>
+                <h2 class="font-serif text-3xl md:text-4xl text-white mt-2 italic">Secure Checkout</h2>
+            </div>
+            <a href="{% url 'cart' %}"
+                class="text-[10px] uppercase tracking-widest text-taylor-gold hover:text-white transition">
+                &larr; Back to Cart
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-16">
+
+            <!-- LEFT COLUMN: The Form (Spans 7 cols) -->
+            <div class="lg:col-span-7" id="form-wrapper">
+
+                <!-- 1. USER INFO -->
+                <form id="form">
+                    <div class="mb-12">
+                        <h3 class="font-serif text-xl text-white mb-6">Contact Information</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <!-- Name -->
+                            <div class="group">
+                                <label
+                                    class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2 group-focus-within:text-taylor-gold transition">Name</label>
+                                <input required
+                                    class="w-full bg-transparent border-b border-white/10 py-2 text-white outline-none focus:border-taylor-gold transition-colors font-serif"
+                                    type="text" name="name" placeholder="John Doe">
+                            </div>
+                            <!-- Email -->
+                            <div class="group">
+                                <label
+                                    class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2 group-focus-within:text-taylor-gold transition">Email</label>
+                                <input required
+                                    class="w-full bg-transparent border-b border-white/10 py-2 text-white outline-none focus:border-taylor-gold transition-colors font-serif"
+                                    type="email" name="email" placeholder="john@example.com">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. SHIPPING INFO -->
+                    <div class="mb-12">
+                        <h3 class="font-serif text-xl text-white mb-6">Shipping Address</h3>
+
+                        <div class="space-y-8">
+                            <!-- Address Line 1 -->
+                            <div class="group">
+                                <label
+                                    class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2 group-focus-within:text-taylor-gold transition">Address</label>
+                                <input required
+                                    class="w-full bg-transparent border-b border-white/10 py-2 text-white outline-none focus:border-taylor-gold transition-colors font-serif"
+                                    type="text" name="address" placeholder="123 Luxury Ave">
+                            </div>
+
+                            <!-- City & State -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div class="group">
+                                    <label
+                                        class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2 group-focus-within:text-taylor-gold transition">City</label>
+                                    <input required
+                                        class="w-full bg-transparent border-b border-white/10 py-2 text-white outline-none focus:border-taylor-gold transition-colors font-serif"
+                                        type="text" name="city" placeholder="Casablanca">
+                                </div>
+                                <div class="group">
+                                    <label
+                                        class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2 group-focus-within:text-taylor-gold transition">State
+                                        / Province</label>
+                                    <input required
+                                        class="w-full bg-transparent border-b border-white/10 py-2 text-white outline-none focus:border-taylor-gold transition-colors font-serif"
+                                        type="text" name="state" placeholder="Grand Casablanca">
+                                </div>
+                            </div>
+
+                            <!-- Zip & Country -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div class="group">
+                                    <label
+                                        class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2 group-focus-within:text-taylor-gold transition">Zip
+                                        Code</label>
+                                    <input required
+                                        class="w-full bg-transparent border-b border-white/10 py-2 text-white outline-none focus:border-taylor-gold transition-colors font-serif"
+                                        type="text" name="zipcode" placeholder="20000">
+                                </div>
+                                <div class="group">
+                                    <label
+                                        class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2 group-focus-within:text-taylor-gold transition">Country</label>
+                                    <input required
+                                        class="w-full bg-transparent border-b border-white/10 py-2 text-white outline-none focus:border-taylor-gold transition-colors font-serif"
+                                        type="text" name="country" placeholder="Morocco">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CONTINUE BUTTON -->
+                    <input id="form-button"
+                        class="cursor-pointer w-full bg-white text-black py-4 text-xs uppercase tracking-mega hover:bg-taylor-gold transition duration-500"
+                        type="submit" value="Continue to Payment">
+                </form>
+
+                <!-- PAYMENT INFO (Hidden initially) -->
+                <div class="hidden mt-10 p-8 border border-taylor-gold/20 bg-white/5" id="payment-info">
+                    <h3 class="font-serif text-xl text-white mb-4">Payment Method</h3>
+                    <p class="text-gray-500 text-sm mb-6">Complete your purchase securely via PayPal.</p>
+
+                    <!-- PayPal Button Container -->
+                    <div id="paypal-button-container"></div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: The Summary (Spans 5 cols) -->
+            <div class="lg:col-span-5">
+                <div class="bg-taylor-card p-8 border border-white/5 sticky top-32">
+                    <h3 class="font-serif text-xl text-white italic mb-6">Order Summary</h3>
+
+                    <!-- ITEM LIST SCROLL AREA -->
+                    <div class="max-h-[300px] overflow-y-auto no-scrollbar mb-8 pr-2">
+                        {% for item in items %}
+                        <div class="flex gap-4 mb-6 border-b border-white/5 pb-4 last:border-0">
+                            <!-- Image -->
+                            <div
+                                class="w-16 h-20 bg-black overflow-hidden relative border border-white/10 flex-shrink-0">
+                                <img src="{{ item.product.imageURL }}" class="w-full h-full object-cover">
+                                <!-- Quantity Badge -->
+                                <div
+                                    class="absolute top-0 right-0 bg-taylor-gold text-black text-[9px] w-5 h-5 flex items-center justify-center font-bold">
+                                    {{ item.quantity }}
+                                </div>
+                            </div>
+                            <!-- Details -->
+                            <div class="flex-1">
+                                <h4 class="font-serif text-white italic">{{ item.product.name }}</h4>
+                                <p class="text-[9px] uppercase tracking-widest text-gray-500 mt-1">Item Total</p>
+                            </div>
+                            <!-- Price -->
+                            <div class="text-taylor-gold font-serif text-sm">
+                                ${{ item.get_total|floatformat:2 }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- TOTALS -->
+                    <div class="space-y-4 text-sm border-t border-white/10 pt-6">
+                        <div class="flex justify-between text-gray-400">
+                            <span>Items ({{ order.get_cart_items }})</span>
+                            <span>${{ order.get_cart_total|floatformat:2 }}</span>
+                        </div>
+                        <div class="flex justify-between text-gray-400">
+                            <span>Shipping</span>
+                            <span class="text-[10px] uppercase text-taylor-gold">Free</span>
+                        </div>
+                        <div class="flex justify-between items-end pt-4 border-t border-white/10">
+                            <span class="text-xs uppercase tracking-widest text-white">Total</span>
+                            <span class="font-serif text-3xl text-taylor-gold italic">${{ order.get_cart_total|floatformat:2 }}</span>
+                        </div>
+                    </div>
+
+                    <!-- SECURITY BADGES -->
+                    <div class="mt-8 pt-6 border-t border-white/5 flex justify-center gap-6 opacity-30">
+                        <svg class="h-6 w-auto text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14h-2v-2h2v2zm0-4h-2V7h2v5z" />
+                        </svg> <!-- Lock Icon placeholder -->
+                        <span class="text-[10px] uppercase tracking-widest text-gray-400 self-center">SSL Encrypted
+                            Payment</span>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script src="https://www.paypal.com/sdk/js?client-id=test&currency=USD&disable-funding=credit"></script>
+
+<script>
+    var total = '{{order.get_cart_total}}' // String from template
+
+    // Render the PayPal button into #paypal-button-container
+    paypal.Buttons({
+        style: {
+            color: 'gold',
+            shape: 'rect',
+        },
+
+        // Set up the transaction
+        createOrder: function (data, actions) {
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: parseFloat(total).toFixed(2)
+                    }
+                }]
+            });
+        },
+
+        // Finalize the transaction
+        onApprove: function (data, actions) {
+            return actions.order.capture().then(function (details) {
+                // Show a success message to the buyer
+                submitFormData()
+            });
+        }
+
+    }).render('#paypal-button-container');
+</script>
+
+<script type="text/javascript">
+    var shipping = '{{order.shipping}}'
+
+    var form = document.getElementById('form')
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault()
+        console.log('Form Submitted...')
+        document.getElementById('form-button').classList.add("hidden");
+        document.getElementById('payment-info').classList.remove("hidden");
+    })
+
+    function submitFormData() {
+        console.log('Payment button clicked')
+
+        var userFormData = {
+            'name': null,
+            'email': null,
+            'total': total,
+        }
+
+        var shippingInfo = {
+            'address': null,
+            'city': null,
+            'state': null,
+            'zipcode': null,
+        }
+
+        if (shipping != 'False') {
+            shippingInfo.address = form.address.value
+            shippingInfo.city = form.city.value
+            shippingInfo.state = form.state.value
+            shippingInfo.zipcode = form.zipcode.value
+        }
+
+        if (user == 'AnonymousUser') {
+            userFormData.name = form.name.value
+            userFormData.email = form.email.value
+        } else {
+            userFormData.name = user.name // We might need to ensure user object has name if we rely on it, otherwise use form
+            userFormData.email = user.email
+            // Actually, the form has these fields, let's just grab from form to be safe or use authenticated user data
+            // For now, let's rely on form data if user didn't pre-fill it effectively, or if we want to support editing
+        }
+        // Let's simpilify and just take from form for now as per the HTML inputs exist
+        userFormData.name = form.name.value
+        userFormData.email = form.email.value
+
+        console.log('Shipping Info:', shippingInfo)
+        console.log('User Info:', userFormData)
+
+        var url = "/process_order/"
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken,
+            },
+            body: JSON.stringify({ 'form': userFormData, 'shipping': shippingInfo }),
+
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log('Success:', data);
+                alert('Transaction completed');
+
+                // Clear cart logic if needed on frontend or just redirect
+                // If backend clears it, we just redirect
+                cart = {}
+                document.cookie = 'cart=' + JSON.stringify(cart) + ";domain=;path=/"
+
+                window.location.href = "{% url 'home' %}"
+
+            })
+    }
+</script>
+{% endblock %}
